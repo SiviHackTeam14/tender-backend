@@ -13,6 +13,13 @@ Verdict = Literal["BID", "MAYBE", "REJECT"]
 
 
 class CompanyProfile(BaseModel):
+    """A bidder's company profile used to filter and score tenders.
+
+    No cross-field invariants (e.g. min_contract_eur <= max_contract_eur) are
+    enforced here, matching the TS side — that logic belongs to Epic 3's
+    hard-filter, not the shared model layer.
+    """
+
     id: str
     name: str
     location: str
@@ -32,6 +39,12 @@ class CompanyProfile(BaseModel):
 
 
 class Tender(BaseModel):
+    """A published tender notice as consumed by the hard filter and LLM reasoning.
+
+    No cross-field invariants (e.g. construction_window_start <=
+    construction_window_end) are enforced here, matching the TS side.
+    """
+
     id: str
     title: str
     location: str
@@ -54,11 +67,20 @@ class Tender(BaseModel):
 
 
 class CriterionResult(BaseModel):
+    """The pass/warn/block verdict and reason for one scoring criterion."""
+
     status: CriterionStatus
     reason: str
 
 
 class AnalysisCriteria(BaseModel):
+    """The five fixed scoring criteria for a tender analysis.
+
+    Named as its own model (the frozen spec describes this as an inline
+    object type) so Pydantic validates the exact key set; Story 0.1 should
+    mirror it as a named `AnalysisCriteria` TS interface to avoid drift.
+    """
+
     reference_eligibility: CriterionResult
     financial_capacity: CriterionResult
     regulatory_familiarity: CriterionResult
@@ -67,6 +89,8 @@ class AnalysisCriteria(BaseModel):
 
 
 class TenderAnalysis(BaseModel):
+    """The bid/no-bid verdict and per-criterion breakdown for one tender."""
+
     tender_id: str
     verdict: Verdict
     summary: str
