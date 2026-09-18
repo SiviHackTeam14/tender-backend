@@ -9,3 +9,6 @@ __pycache__/
 *.egg-info/
 data/raw_notices.json
 data/
+data/enriched_notices.json
+data/enrichment-log.jsonl
+data/lv_packages/
