@@ -70,6 +70,7 @@ class JobAccepted(BaseModel):
     id: str
     status_url: str
     audit_url: str
+    data_url: str
 
 
 def make_result(fields, audit, selection):

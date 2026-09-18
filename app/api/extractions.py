@@ -7,7 +7,7 @@ from zipfile import BadZipFile
 from fastapi import APIRouter, Depends, HTTPException, Request, Response, UploadFile
 
 from app.api.extraction_models import ExtractionJob, JobAccepted
-from app.llm.extraction import ExtractionError, GeminiClient
+from app.llm.extraction import ExtractedRequirements, ExtractionError, GeminiClient
 from app.llm.tender_zip import inventory_zip
 from app.services.extraction_jobs import CapacityError, ExtractionJobs
 
@@ -58,7 +58,7 @@ def create_extraction(file: UploadFile, response: Response,
         owned_by_job = True
         url = f"/api/extractions/{job_id}"
         response.headers["Location"] = url
-        return JobAccepted(id=job_id, status_url=url, audit_url=url + "/audit")
+        return JobAccepted(id=job_id, status_url=url, audit_url=url + "/audit", data_url=url + "/data")
     finally:
         file.file.close()
         if path and not owned_by_job:
@@ -79,3 +79,13 @@ def get_audit(job_id: str, jobs: ExtractionJobs = Depends(get_jobs)):
     if job.status != "completed":
         raise HTTPException(409, detail={"code": "not_ready", "message": "Audit is available after successful extraction"})
     return jobs.audit(job_id)
+
+
+@router.get("/{job_id}/data", response_model=ExtractedRequirements)
+def get_data(job_id: str, response: Response, jobs: ExtractionJobs = Depends(get_jobs)):
+    """Download only document fields; job progress and source audit stay separate."""
+    job = get_extraction(job_id, jobs)
+    if job.status != "completed" or job.result is None:
+        raise HTTPException(409, detail={"code": "not_ready", "message": "Data is available after successful extraction"})
+    response.headers["Content-Disposition"] = 'attachment; filename="tender-data.json"'
+    return job.result.fields

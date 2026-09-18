@@ -5,6 +5,11 @@ extracts only those PDFs, and returns a typed result. The API defaults to
 `gemini-3.8-flash`; `GEMINI_MODEL` can override it on the server. The browser never
 receives or submits the Gemini API key.
 
+The active pipeline is **document upload → extraction → JSON**. It accepts no
+company profile and does not call filtering or bid reasoning. The existing
+reasoning implementation is preserved for a later **filter → reason** stage;
+it will run only on filter survivors when that stage is integrated.
+
 ## Start the backend
 
 From `hackathon/tender-backend`:
@@ -29,8 +34,9 @@ CORS permits the existing Angular dev origin `http://localhost:4200`.
 
 | Request | Response |
 | --- | --- |
-| `POST /api/extractions` with multipart field `file` | `202 {id, status_url, audit_url}` and a Location header |
+| `POST /api/extractions` with multipart field `file` | `202 {id, status_url, audit_url, data_url}` and a Location header |
 | `GET /api/extractions/{id}` | Job status, progress, result or error |
+| `GET /api/extractions/{id}/data` | Only the 12 extracted fields as a JSON download; 409 until successful completion |
 | `GET /api/extractions/{id}/audit` | Full source-chunk audit after completion; 409 otherwise |
 
 ```bash
@@ -44,11 +50,22 @@ Copy the returned `id` and poll:
 curl -sS http://localhost:8000/api/extractions/REPLACE_WITH_JOB_ID | python3 -m json.tool
 ```
 
+After completion, download the fields without the job/audit envelope:
+
+```bash
+curl --fail -sS http://localhost:8000/api/extractions/REPLACE_WITH_JOB_ID/data -o tender-data.json
+```
+
+The data response has no verdict, score, summary, recommendation or criterion
+ratings. Missing facts stay null; arrays contain only findings. The existing CLI
+`scripts/extract_tender.py` also emits only these fields to stdout.
+
 States: `queued` → `selecting` → `reading` → `extracting` → `completed` or `failed`.
 During extraction, `progress.completed_chunks / progress.total_chunks` is real
 chunk progress. During title selection and PDF reading, show an indeterminate
 indicator. Do not manufacture percentages for those stages. A completed job can
 still have `result.requires_review=true`.
+This means extraction data needs checking, not that a tender is unsuitable.
 
 Every status response has `id`, `filename`, `model`, `status`, `progress`, `result`,
 and `error`. `result` is null until successful completion; `error` is null unless
@@ -97,20 +114,18 @@ The Python and TypeScript `Tender` models now support extraction nulls and
 legacy `either` values to null. Do not cast raw extraction fields to `Tender` or
 invent missing notice values.
 
-Use `extractForTender(file, notice)` to upload and enrich an existing notice. It
-emits `TenderExtractionJob`: the usual job plus `tender`, populated on completion.
-The adapter maps `estimated_value_eur` to `value_eur`, preserves notice metadata,
-and keeps known notice values when a document field is `not_found`. Conflicts
-retain extraction nulls, clearing the previous value. Combined text marked
-`needs_review` is included, with its review details retained in `job.result`.
-Keep that result alongside the enriched tender; the tender alone does not carry
-provenance or review status. A preserved notice value is not document-confirmed.
+The active flow uses `job.result.fields` directly and leaves missing values null.
+`extractForTender` and `TenderExtractionJob` have been removed from the service
+contract. The legacy notice adapter is retained for future explicit enrichment,
+but is not used during extraction and cannot fill unknown document fields from
+notice values in this flow.
 
 ```typescript
-this.extractor.extractForTender(file, notice).subscribe(job => {
-  if (job.status === 'completed' && job.tender && job.result) {
-    // Display job.tender; show job.result.requires_review and field_status.
-    // Expand job.result.evidence and review_reasons for source inspection.
+this.extractor.extract(file).subscribe(job => {
+  if (job.status === 'completed' && job.result) {
+    const json = JSON.stringify(job.result.fields, null, 2);
+    // Display JSON as text; dataUrl(job.id) links to the fields-only download.
+    // auditUrl(job.id) exposes the separate source evidence.
   }
 });
 ```
@@ -118,12 +133,15 @@ this.extractor.extractForTender(file, notice).subscribe(job => {
 ## Angular service already provided
 
 - `src/app/models/extraction.ts`: typed request/result contract.
-- `src/app/services/extraction.service.ts`: upload, get, watch, extract, extractForTender and audit URL.
-- `src/app/services/tender-extraction.adapter.ts`: pure mapping to the shared Tender model.
+- `src/app/services/extraction.service.ts`: upload, get, watch, extract, data, data URL and audit URL.
+- `src/app/components/tender-extraction/`: ZIP upload, progress, JSON preview and download.
 - `provideHttpClient()` is registered in `app.config.ts`.
 
 The service uses the existing `environment.apiUrl`. It intentionally always calls
-the backend; the existing unrelated `useMock` flag does not fake extraction.
+the backend; `useMock` is false. Home now opens extraction and `/board` redirects
+there. No profile selection, triage verdicts or reasoning calls occur in this view.
+On a transient polling failure the user can resume the same job without uploading
+again. Expired jobs allow a fresh upload.
 
 Example inside a component (add normal Angular imports):
 
