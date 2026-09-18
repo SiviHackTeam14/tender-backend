@@ -1,0 +1,69 @@
+[
+  {
+    "id": "profile-a",
+    "name": "Brenner & Sohn Tiefbau GmbH",
+    "location": "Augsburg",
+    "nuts_code": "DE27",
+    "distance_limit_km": 150,
+    "focus_areas": [
+      "road_construction",
+      "sewers",
+      "pipelines",
+      "earthworks",
+      "municipal_civil"
+    ],
+    "min_contract_eur": 400000,
+    "max_contract_eur": 4000000,
+    "max_guarantee_eur": 1500000,
+    "role": "main_contractor",
+    "available_from": "2027-03-01",
+    "revenue_eur": 31000000,
+    "reg_familiarity": "very_high",
+    "certifications": [
+      "ISO_9001"
+    ],
+    "can_show_references": [
+      "road rehabilitation >€800k",
+      "sewer renewal",
+      "site development"
+    ],
+    "cannot_show": [
+      "rail-side",
+      "bridges",
+      "outside Germany"
+    ]
+  },
+  {
+    "id": "profile-b",
+    "name": "Elektro Vogtland GmbH",
+    "location": "Plauen",
+    "nuts_code": "DED4",
+    "distance_limit_km": 200,
+    "focus_areas": [
+      "electrical_installation",
+      "fire_alarm",
+      "building_automation"
+    ],
+    "min_contract_eur": 80000,
+    "max_contract_eur": 900000,
+    "max_guarantee_eur": 300000,
+    "role": "subcontractor",
+    "available_from": "2026-11-01",
+    "revenue_eur": 8000000,
+    "reg_familiarity": "high",
+    "certifications": [
+      "ISO_9001"
+    ],
+    "can_show_references": [
+      "school refurbishments",
+      "hospital ward",
+      "office fit-out",
+      "care homes"
+    ],
+    "cannot_show": [
+      "high voltage",
+      "ATEX explosion-protected",
+      "main contractor multi-trade"
+    ]
+  }
+]

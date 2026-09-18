@@ -1,0 +1,566 @@
+{
+  "profile-a": [
+    {
+      "tender_id": "T001",
+      "verdict": "BID",
+      "summary": "Core trade, local terrain, refs match exactly. Guarantee well within credit line.",
+      "hard_reject_reason": null,
+      "criteria": {
+        "reference_eligibility": {
+          "status": "PASS",
+          "reason": "Road rehab references match exactly"
+        },
+        "financial_capacity": {
+          "status": "PASS",
+          "reason": "€90k guarantee well within €1.5M capacity; the 30% self-performed share is standard for a job this size with two active crews"
+        },
+        "regulatory_familiarity": {
+          "status": "PASS",
+          "reason": "Bavarian district tender, home territory"
+        },
+        "competitive_position": {
+          "status": "WARNING",
+          "reason": "3–4 regional competitors likely"
+        },
+        "strategic_fit": {
+          "status": "PASS",
+          "reason": "Core trade, preferred size, local client type"
+        }
+      }
+    },
+    {
+      "tender_id": "T002",
+      "verdict": "BID",
+      "summary": "A sewer renewal on home turf, sized right, with references that match one-to-one. Nothing here needs a second look.",
+      "hard_reject_reason": null,
+      "criteria": {
+        "reference_eligibility": {
+          "status": "PASS",
+          "reason": "District sewer renewal matches the company's proven references directly"
+        },
+        "financial_capacity": {
+          "status": "PASS",
+          "reason": "€65k guarantee is a small fraction of the €1.5M capacity; the 25% self-performed share is easily covered by existing crews"
+        },
+        "regulatory_familiarity": {
+          "status": "PASS",
+          "reason": "Familiar Bavarian district client and procurement process"
+        },
+        "competitive_position": {
+          "status": "PASS",
+          "reason": "Comfortable mid-size lot, well inside the company's typical winning range"
+        },
+        "strategic_fit": {
+          "status": "PASS",
+          "reason": "Exactly the trade and scale this company wants more of"
+        }
+      }
+    },
+    {
+      "tender_id": "T003",
+      "verdict": "BID",
+      "summary": "On the doorstep, the right trade, and a reference that matches word for word. Worth the estimating hours.",
+      "hard_reject_reason": null,
+      "criteria": {
+        "reference_eligibility": {
+          "status": "PASS",
+          "reason": "Housing-estate site development reference matches directly"
+        },
+        "financial_capacity": {
+          "status": "WARNING",
+          "reason": "€180k guarantee is manageable alone but would stack with other live bids, and the 40% self-performed share adds real crew-scheduling pressure on top of that"
+        },
+        "regulatory_familiarity": {
+          "status": "PASS",
+          "reason": "8km from home base, well-known municipal client"
+        },
+        "competitive_position": {
+          "status": "PASS",
+          "reason": "Local presence gives a real edge over out-of-region bidders"
+        },
+        "strategic_fit": {
+          "status": "PASS",
+          "reason": "Multi-year earthworks scope the company actively wants"
+        }
+      }
+    },
+    {
+      "tender_id": "T004",
+      "verdict": "REJECT",
+      "summary": "Right region, right size, right role — but the tender demands a bridge reference the company has explicitly ruled out showing. A specialist bridge contractor wins this, not us.",
+      "hard_reject_reason": null,
+      "criteria": {
+        "reference_eligibility": {
+          "status": "BLOCK",
+          "reason": "Requires a completed bridge rehabilitation/new-build reference; the company's portfolio explicitly excludes bridge work"
+        },
+        "financial_capacity": {
+          "status": "PASS",
+          "reason": "€110k guarantee well within €1.5M capacity"
+        },
+        "regulatory_familiarity": {
+          "status": "PASS",
+          "reason": "Local Bavarian district client, familiar procurement process"
+        },
+        "competitive_position": {
+          "status": "WARNING",
+          "reason": "Specialist bridge contractors will likely out-compete a firm with no bridge portfolio"
+        },
+        "strategic_fit": {
+          "status": "BLOCK",
+          "reason": "Bridge work sits outside the trades the company can credibly bid; the 35% self-performed share would also demand crew skills (bridge formwork, specialist reinforcement) the company doesn't currently have"
+        }
+      }
+    },
+    {
+      "tender_id": "T005",
+      "verdict": "REJECT",
+      "summary": "340km from Augsburg is more than double the company's 150km operating radius — excluded before any reasoning.",
+      "hard_reject_reason": "TOO_FAR: 340km exceeds 150km limit",
+      "criteria": {
+        "reference_eligibility": {
+          "status": "BLOCK",
+          "reason": "Excluded before reasoning — TOO_FAR: 340km exceeds 150km limit"
+        },
+        "financial_capacity": {
+          "status": "BLOCK",
+          "reason": "Excluded before reasoning — TOO_FAR: 340km exceeds 150km limit"
+        },
+        "regulatory_familiarity": {
+          "status": "BLOCK",
+          "reason": "Excluded before reasoning — TOO_FAR: 340km exceeds 150km limit"
+        },
+        "competitive_position": {
+          "status": "BLOCK",
+          "reason": "Excluded before reasoning — TOO_FAR: 340km exceeds 150km limit"
+        },
+        "strategic_fit": {
+          "status": "BLOCK",
+          "reason": "Excluded before reasoning — TOO_FAR: 340km exceeds 150km limit"
+        }
+      }
+    },
+    {
+      "tender_id": "T006",
+      "verdict": "REJECT",
+      "summary": "330km from Augsburg exceeds the company's 150km operating radius — excluded before any reasoning.",
+      "hard_reject_reason": "TOO_FAR: 330km exceeds 150km limit",
+      "criteria": {
+        "reference_eligibility": {
+          "status": "BLOCK",
+          "reason": "Excluded before reasoning — TOO_FAR: 330km exceeds 150km limit"
+        },
+        "financial_capacity": {
+          "status": "BLOCK",
+          "reason": "Excluded before reasoning — TOO_FAR: 330km exceeds 150km limit"
+        },
+        "regulatory_familiarity": {
+          "status": "BLOCK",
+          "reason": "Excluded before reasoning — TOO_FAR: 330km exceeds 150km limit"
+        },
+        "competitive_position": {
+          "status": "BLOCK",
+          "reason": "Excluded before reasoning — TOO_FAR: 330km exceeds 150km limit"
+        },
+        "strategic_fit": {
+          "status": "BLOCK",
+          "reason": "Excluded before reasoning — TOO_FAR: 330km exceeds 150km limit"
+        }
+      }
+    },
+    {
+      "tender_id": "T007",
+      "verdict": "REJECT",
+      "summary": "350km from Augsburg exceeds the company's 150km operating radius — excluded before any reasoning.",
+      "hard_reject_reason": "TOO_FAR: 350km exceeds 150km limit",
+      "criteria": {
+        "reference_eligibility": {
+          "status": "BLOCK",
+          "reason": "Excluded before reasoning — TOO_FAR: 350km exceeds 150km limit"
+        },
+        "financial_capacity": {
+          "status": "BLOCK",
+          "reason": "Excluded before reasoning — TOO_FAR: 350km exceeds 150km limit"
+        },
+        "regulatory_familiarity": {
+          "status": "BLOCK",
+          "reason": "Excluded before reasoning — TOO_FAR: 350km exceeds 150km limit"
+        },
+        "competitive_position": {
+          "status": "BLOCK",
+          "reason": "Excluded before reasoning — TOO_FAR: 350km exceeds 150km limit"
+        },
+        "strategic_fit": {
+          "status": "BLOCK",
+          "reason": "Excluded before reasoning — TOO_FAR: 350km exceeds 150km limit"
+        }
+      }
+    },
+    {
+      "tender_id": "T008",
+      "verdict": "REJECT",
+      "summary": "400km from Augsburg exceeds the company's 150km operating radius — excluded before any reasoning.",
+      "hard_reject_reason": "TOO_FAR: 400km exceeds 150km limit",
+      "criteria": {
+        "reference_eligibility": {
+          "status": "BLOCK",
+          "reason": "Excluded before reasoning — TOO_FAR: 400km exceeds 150km limit"
+        },
+        "financial_capacity": {
+          "status": "BLOCK",
+          "reason": "Excluded before reasoning — TOO_FAR: 400km exceeds 150km limit"
+        },
+        "regulatory_familiarity": {
+          "status": "BLOCK",
+          "reason": "Excluded before reasoning — TOO_FAR: 400km exceeds 150km limit"
+        },
+        "competitive_position": {
+          "status": "BLOCK",
+          "reason": "Excluded before reasoning — TOO_FAR: 400km exceeds 150km limit"
+        },
+        "strategic_fit": {
+          "status": "BLOCK",
+          "reason": "Excluded before reasoning — TOO_FAR: 400km exceeds 150km limit"
+        }
+      }
+    },
+    {
+      "tender_id": "T009",
+      "verdict": "REJECT",
+      "summary": "325km from Augsburg exceeds the company's 150km operating radius — excluded before any reasoning.",
+      "hard_reject_reason": "TOO_FAR: 325km exceeds 150km limit",
+      "criteria": {
+        "reference_eligibility": {
+          "status": "BLOCK",
+          "reason": "Excluded before reasoning — TOO_FAR: 325km exceeds 150km limit"
+        },
+        "financial_capacity": {
+          "status": "BLOCK",
+          "reason": "Excluded before reasoning — TOO_FAR: 325km exceeds 150km limit"
+        },
+        "regulatory_familiarity": {
+          "status": "BLOCK",
+          "reason": "Excluded before reasoning — TOO_FAR: 325km exceeds 150km limit"
+        },
+        "competitive_position": {
+          "status": "BLOCK",
+          "reason": "Excluded before reasoning — TOO_FAR: 325km exceeds 150km limit"
+        },
+        "strategic_fit": {
+          "status": "BLOCK",
+          "reason": "Excluded before reasoning — TOO_FAR: 325km exceeds 150km limit"
+        }
+      }
+    },
+    {
+      "tender_id": "T010",
+      "verdict": "MAYBE",
+      "summary": "The trade and territory are perfect, but this one guarantee would tie up almost the entire credit line — worth bidding only if it isn't run alongside another large guarantee commitment.",
+      "hard_reject_reason": null,
+      "criteria": {
+        "reference_eligibility": {
+          "status": "PASS",
+          "reason": "Municipal civil engineering references exceed the €2M threshold required"
+        },
+        "financial_capacity": {
+          "status": "WARNING",
+          "reason": "€1.42M guarantee would consume nearly all of the €1.5M guarantee capacity at once"
+        },
+        "regulatory_familiarity": {
+          "status": "PASS",
+          "reason": "Familiar Bavarian municipal client, 18km from home base"
+        },
+        "competitive_position": {
+          "status": "PASS",
+          "reason": "Size and location favor a local, established contractor"
+        },
+        "strategic_fit": {
+          "status": "WARNING",
+          "reason": "45% self-performed share plus a near-ceiling guarantee makes this the largest, tightest bet of the week"
+        }
+      }
+    }
+  ],
+  "profile-b": [
+    {
+      "tender_id": "T001",
+      "verdict": "REJECT",
+      "summary": "335km from Plauen exceeds the company's 200km operating radius — excluded before any reasoning.",
+      "hard_reject_reason": "TOO_FAR: 335km exceeds 200km limit",
+      "criteria": {
+        "reference_eligibility": {
+          "status": "BLOCK",
+          "reason": "Excluded before reasoning — TOO_FAR: 335km exceeds 200km limit"
+        },
+        "financial_capacity": {
+          "status": "BLOCK",
+          "reason": "Excluded before reasoning — TOO_FAR: 335km exceeds 200km limit"
+        },
+        "regulatory_familiarity": {
+          "status": "BLOCK",
+          "reason": "Excluded before reasoning — TOO_FAR: 335km exceeds 200km limit"
+        },
+        "competitive_position": {
+          "status": "BLOCK",
+          "reason": "Excluded before reasoning — TOO_FAR: 335km exceeds 200km limit"
+        },
+        "strategic_fit": {
+          "status": "BLOCK",
+          "reason": "Excluded before reasoning — TOO_FAR: 335km exceeds 200km limit"
+        }
+      }
+    },
+    {
+      "tender_id": "T002",
+      "verdict": "REJECT",
+      "summary": "345km from Plauen exceeds the company's 200km operating radius — excluded before any reasoning.",
+      "hard_reject_reason": "TOO_FAR: 345km exceeds 200km limit",
+      "criteria": {
+        "reference_eligibility": {
+          "status": "BLOCK",
+          "reason": "Excluded before reasoning — TOO_FAR: 345km exceeds 200km limit"
+        },
+        "financial_capacity": {
+          "status": "BLOCK",
+          "reason": "Excluded before reasoning — TOO_FAR: 345km exceeds 200km limit"
+        },
+        "regulatory_familiarity": {
+          "status": "BLOCK",
+          "reason": "Excluded before reasoning — TOO_FAR: 345km exceeds 200km limit"
+        },
+        "competitive_position": {
+          "status": "BLOCK",
+          "reason": "Excluded before reasoning — TOO_FAR: 345km exceeds 200km limit"
+        },
+        "strategic_fit": {
+          "status": "BLOCK",
+          "reason": "Excluded before reasoning — TOO_FAR: 345km exceeds 200km limit"
+        }
+      }
+    },
+    {
+      "tender_id": "T003",
+      "verdict": "REJECT",
+      "summary": "330km from Plauen exceeds the company's 200km operating radius — excluded before any reasoning.",
+      "hard_reject_reason": "TOO_FAR: 330km exceeds 200km limit",
+      "criteria": {
+        "reference_eligibility": {
+          "status": "BLOCK",
+          "reason": "Excluded before reasoning — TOO_FAR: 330km exceeds 200km limit"
+        },
+        "financial_capacity": {
+          "status": "BLOCK",
+          "reason": "Excluded before reasoning — TOO_FAR: 330km exceeds 200km limit"
+        },
+        "regulatory_familiarity": {
+          "status": "BLOCK",
+          "reason": "Excluded before reasoning — TOO_FAR: 330km exceeds 200km limit"
+        },
+        "competitive_position": {
+          "status": "BLOCK",
+          "reason": "Excluded before reasoning — TOO_FAR: 330km exceeds 200km limit"
+        },
+        "strategic_fit": {
+          "status": "BLOCK",
+          "reason": "Excluded before reasoning — TOO_FAR: 330km exceeds 200km limit"
+        }
+      }
+    },
+    {
+      "tender_id": "T004",
+      "verdict": "REJECT",
+      "summary": "370km from Plauen exceeds the company's 200km operating radius — excluded before any reasoning.",
+      "hard_reject_reason": "TOO_FAR: 370km exceeds 200km limit",
+      "criteria": {
+        "reference_eligibility": {
+          "status": "BLOCK",
+          "reason": "Excluded before reasoning — TOO_FAR: 370km exceeds 200km limit"
+        },
+        "financial_capacity": {
+          "status": "BLOCK",
+          "reason": "Excluded before reasoning — TOO_FAR: 370km exceeds 200km limit"
+        },
+        "regulatory_familiarity": {
+          "status": "BLOCK",
+          "reason": "Excluded before reasoning — TOO_FAR: 370km exceeds 200km limit"
+        },
+        "competitive_position": {
+          "status": "BLOCK",
+          "reason": "Excluded before reasoning — TOO_FAR: 370km exceeds 200km limit"
+        },
+        "strategic_fit": {
+          "status": "BLOCK",
+          "reason": "Excluded before reasoning — TOO_FAR: 370km exceeds 200km limit"
+        }
+      }
+    },
+    {
+      "tender_id": "T005",
+      "verdict": "BID",
+      "summary": "A school electrical fit-out, sized and located exactly where this company wins. References match one-to-one.",
+      "hard_reject_reason": null,
+      "criteria": {
+        "reference_eligibility": {
+          "status": "PASS",
+          "reason": "School refurbishment references match this scope directly"
+        },
+        "financial_capacity": {
+          "status": "PASS",
+          "reason": "€35k guarantee is a small fraction of the €300k capacity"
+        },
+        "regulatory_familiarity": {
+          "status": "PASS",
+          "reason": "Saxony school-building client, familiar procurement process"
+        },
+        "competitive_position": {
+          "status": "PASS",
+          "reason": "Comfortable sub-€500k lot size, low competitive pressure from larger firms"
+        },
+        "strategic_fit": {
+          "status": "PASS",
+          "reason": "Exactly the trade and role this company wants"
+        }
+      }
+    },
+    {
+      "tender_id": "T006",
+      "verdict": "BID",
+      "summary": "In Plauen itself, hospital-ward electrical work the company has done before. The reference match alone should carry this bid.",
+      "hard_reject_reason": null,
+      "criteria": {
+        "reference_eligibility": {
+          "status": "PASS",
+          "reason": "Hospital ward block reference matches this scope directly"
+        },
+        "financial_capacity": {
+          "status": "PASS",
+          "reason": "€45k guarantee is a small fraction of the €300k capacity"
+        },
+        "regulatory_familiarity": {
+          "status": "PASS",
+          "reason": "Home city, well-known healthcare-facility client"
+        },
+        "competitive_position": {
+          "status": "WARNING",
+          "reason": "A few larger regional electrical firms may also chase this one"
+        },
+        "strategic_fit": {
+          "status": "PASS",
+          "reason": "Healthcare fit-out is core to the company's reference base"
+        }
+      }
+    },
+    {
+      "tender_id": "T007",
+      "verdict": "BID",
+      "summary": "A small, comfortable office fit-out squarely in the company's proven scope. Low risk, low competition, easy yes.",
+      "hard_reject_reason": null,
+      "criteria": {
+        "reference_eligibility": {
+          "status": "PASS",
+          "reason": "Office fit-out reference matches this scope directly"
+        },
+        "financial_capacity": {
+          "status": "PASS",
+          "reason": "€20k guarantee is negligible against the €300k capacity"
+        },
+        "regulatory_familiarity": {
+          "status": "PASS",
+          "reason": "Familiar Saxony commercial-client procurement process"
+        },
+        "competitive_position": {
+          "status": "PASS",
+          "reason": "Small lot size keeps larger competitors uninterested"
+        },
+        "strategic_fit": {
+          "status": "PASS",
+          "reason": "Comfortable size and trade, adds to a proven reference type"
+        }
+      }
+    },
+    {
+      "tender_id": "T008",
+      "verdict": "REJECT",
+      "summary": "Right region, and the SPS control cabinet looks like our kind of work at first glance — but this is a Wassertechnik-Fachbetrieb job requiring DIN EN 1090 welding certification we don't hold. A water-technology specialist wins this one.",
+      "hard_reject_reason": null,
+      "criteria": {
+        "reference_eligibility": {
+          "status": "BLOCK",
+          "reason": "LV Vorbemerkungen requires a certified Wassertechnik-Fachbetrieb reference; no comparable fountain/water-technology installation in the company's portfolio"
+        },
+        "financial_capacity": {
+          "status": "WARNING",
+          "reason": "Guarantee amount is not disclosed in the published documents; cannot confirm it fits within the €300k capacity"
+        },
+        "regulatory_familiarity": {
+          "status": "WARNING",
+          "reason": "Municipal client type is familiar, but the Wassertechnik-Fachbetrieb qualification requirement is unfamiliar territory"
+        },
+        "competitive_position": {
+          "status": "BLOCK",
+          "reason": "Specialist Wassertechnik and DIN EN 1090-certified stainless-steel welding firms will dominate this bid; the company holds neither qualification"
+        },
+        "strategic_fit": {
+          "status": "BLOCK",
+          "reason": "Fountain water technology is adjacent to but distinct from the company's core building-electrical trade; winning it would mean subcontracting the core scope"
+        }
+      }
+    },
+    {
+      "tender_id": "T009",
+      "verdict": "REJECT",
+      "summary": "Close to home and a comfortable contract size, but high-voltage switchgear is explicitly outside what this company is certified and willing to bid — a hard no despite the fit everywhere else.",
+      "hard_reject_reason": null,
+      "criteria": {
+        "reference_eligibility": {
+          "status": "WARNING",
+          "reason": "General electrical installation references exist, but none involve high-voltage switchgear specifically"
+        },
+        "financial_capacity": {
+          "status": "PASS",
+          "reason": "€60k guarantee well within €300k capacity"
+        },
+        "regulatory_familiarity": {
+          "status": "PASS",
+          "reason": "Saxony municipal/utility client, familiar territory"
+        },
+        "competitive_position": {
+          "status": "BLOCK",
+          "reason": "High-voltage switchgear work is explicitly outside the company's certified scope — cannot compete credibly"
+        },
+        "strategic_fit": {
+          "status": "BLOCK",
+          "reason": "Company profile explicitly excludes high-voltage and explosion-protected installations"
+        }
+      }
+    },
+    {
+      "tender_id": "T010",
+      "verdict": "REJECT",
+      "summary": "335km from Plauen exceeds the company's 200km operating radius — excluded before any reasoning.",
+      "hard_reject_reason": "TOO_FAR: 335km exceeds 200km limit",
+      "criteria": {
+        "reference_eligibility": {
+          "status": "BLOCK",
+          "reason": "Excluded before reasoning — TOO_FAR: 335km exceeds 200km limit"
+        },
+        "financial_capacity": {
+          "status": "BLOCK",
+          "reason": "Excluded before reasoning — TOO_FAR: 335km exceeds 200km limit"
+        },
+        "regulatory_familiarity": {
+          "status": "BLOCK",
+          "reason": "Excluded before reasoning — TOO_FAR: 335km exceeds 200km limit"
+        },
+        "competitive_position": {
+          "status": "BLOCK",
+          "reason": "Excluded before reasoning — TOO_FAR: 335km exceeds 200km limit"
+        },
+        "strategic_fit": {
+          "status": "BLOCK",
+          "reason": "Excluded before reasoning — TOO_FAR: 335km exceeds 200km limit"
+        }
+      }
+    }
+  ]
+}
