@@ -66,6 +66,8 @@ status are separate. No company profile or suitability verdict is involved.
 
 The reasoning module is preserved for the later **filter → reason** stage and
 is not called by extraction or the current frontend. Once filters are integrated,
+## Bid reasoning
+
 `app.llm.reasoning.analyze(profile, survivors)` returns validated five-criterion
 `TenderAnalysis` results, retries invalid model output once, and explains each
 BID/MAYBE/REJECT decision. See [scripts/REASONING.md](scripts/REASONING.md) for

@@ -105,3 +105,67 @@ def read_selected_pages(path, report):
     if not pages:
         raise ExtractionError("Selected PDFs contain no usable content (all pages are blank)")
     return pages
+
+
+# ── Story 1.2 additions: GAEB routing + OCR fallback ─────────────
+# Additive only — nothing above this line is modified. ``zip_like`` accepts
+# anything ``zipfile.ZipFile`` accepts, including an ``io.BytesIO`` buffer, so
+# the RIB "mein Auftrag" adapter's in-memory-synthesized package (which has no
+# path on disk) flows through the exact same functions as a real downloaded
+# ZIP.
+from app.llm.gaeb import is_gaeb_member  # noqa: E402
+
+
+def find_gaeb_member(zip_like):
+    """Return the first GAEB (.x83/.x81/.x84) member name in ``zip_like``, or
+    ``None``. GAEB's presence *is* the LV — when found, the caller should
+    parse it directly and skip Gemini title-selection entirely.
+    """
+    with ZipFile(zip_like) as archive:
+        for name in archive.namelist():
+            if is_gaeb_member(name):
+                return name
+    return None
+
+
+def read_selected_pages_with_ocr_fallback(path, report, ocr_page=None):
+    """Same selected-PDF loop as ``read_selected_pages``, but a page with no
+    usable text layer calls ``ocr_page(page_image_bytes) -> str`` instead of
+    raising — dropping (not failing) that one page if ``ocr_page`` is ``None``,
+    returns blank, or raises. The rest of the document still processes.
+
+    Returns ``(pages, ocr_pages_used, ocr_pages_dropped)``.
+    """
+    import pdfplumber
+
+    selected = [entry for entry in report["pdfs"] if entry["decision"] == "include"]
+    if not selected:
+        raise ExtractionError("No PDF titles selected; inspect the selection report")
+    pages = []
+    ocr_used = 0
+    ocr_dropped = 0
+    with ZipFile(path) as archive:
+        for entry in selected:
+            if entry["bytes"] > 100 * 1024 * 1024:
+                raise ExtractionError(f"Selected PDF exceeds 100 MB: {entry['path']}")
+            pdf_bytes = archive.read(entry["path"])
+            with pdfplumber.open(io.BytesIO(pdf_bytes)) as pdf:
+                if not pdf.pages:
+                    raise ExtractionError(f"Selected PDF has no pages: {entry['path']}")
+                for number, page in enumerate(pdf.pages, 1):
+                    text = page.extract_text() or ""
+                    if text.strip():
+                        pages.append((entry["path"], number, text))
+                        continue
+                    ocr_text = ""
+                    if ocr_page is not None:
+                        try:
+                            ocr_text = ocr_page(pdf_bytes, entry["path"], number) or ""
+                        except Exception:
+                            ocr_text = ""
+                    if ocr_text.strip():
+                        pages.append((entry["path"], number, ocr_text))
+                        ocr_used += 1
+                    else:
+                        ocr_dropped += 1
+    return pages, ocr_used, ocr_dropped
