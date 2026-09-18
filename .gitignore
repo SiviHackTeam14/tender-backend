@@ -8,3 +8,4 @@ __pycache__/
 .pytest_cache/
 *.egg-info/
 data/raw_notices.json
+data/
