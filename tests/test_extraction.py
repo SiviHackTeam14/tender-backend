@@ -38,6 +38,15 @@ def test_retry_fails_loudly():
     assert len(fake.calls) == 2
 
 
+@pytest.mark.parametrize("verdict", ["ACCEPT", "BID", "MAYBE", "REJECT"])
+def test_extraction_retries_and_discards_suitability_output(verdict):
+    fake = Fake(json.dumps(empty() | {"verdict": verdict}), json.dumps(empty()))
+    result = extract_chunk("Keine explizite Auftragssumme genannt.", fake)
+    assert set(result.model_dump()) == set(empty())
+    assert result.estimated_value_eur is None
+    assert len(fake.calls) == 2
+
+
 @pytest.mark.parametrize("field,value", [
     ("role_required", "either"), ("estimated_value_eur", "1000"),
     ("estimated_value_eur", -1), ("estimated_value_eur", float("nan")),

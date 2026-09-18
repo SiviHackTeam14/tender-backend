@@ -58,6 +58,14 @@ ZIP uploads and polling are available at `/api/extractions`. Start the backend w
 See [frontend integration guide](scripts/FRONTEND-INTEGRATION.md) for the Angular
 service, API contract, result statuses, setup and deployment limits.
 
+The active flow only extracts document data. Download the 12 JSON fields at
+`GET /api/extractions/{id}/data` after completion; source audit and processing
+status are separate. No company profile or suitability verdict is involved.
+
+## Bid reasoning
+
+The reasoning module is preserved for the later **filter → reason** stage and
+is not called by extraction or the current frontend. Once filters are integrated,
 ## Bid reasoning
 
 `app.llm.reasoning.analyze(profile, survivors)` returns validated five-criterion

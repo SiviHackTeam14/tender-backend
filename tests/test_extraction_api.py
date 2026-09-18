@@ -116,6 +116,25 @@ def test_upload_poll_result_and_audit(setup_api):
     assert audit["model"] == "gemini-3.8-flash"
 
 
+def test_data_download_is_only_extracted_fields_without_reasoning(setup_api, monkeypatch):
+    from app.llm.extraction import ExtractedRequirements
+    client, _, generate = setup_api
+    def forbidden(*args, **kwargs):
+        pytest.fail("Extraction must not invoke suitability reasoning")
+    monkeypatch.setattr("app.llm.reasoning.analyze", forbidden)
+    accepted = upload(client).json()
+    job = finished(client, accepted["status_url"])
+    response = client.get(accepted["data_url"])
+    assert response.status_code == 200
+    assert response.headers["content-type"] == "application/json"
+    assert response.headers["content-disposition"] == 'attachment; filename="tender-data.json"'
+    assert response.json() == job["result"]["fields"]
+    assert set(response.json()) == set(ExtractedRequirements.model_fields)
+    assert response.json()["estimated_value_eur"] is None
+    assert "verdict" not in response.json() and "criteria" not in response.json()
+    assert generate.calls == 2  # title selection + extraction; no suitability call
+
+
 def test_terminal_failure_and_retry(setup_api):
     client, _, generate = setup_api
     generate.fail = True
@@ -126,6 +145,7 @@ def test_terminal_failure_and_retry(setup_api):
     assert job["error"]["code"] == "extraction_failed"
     assert generate.calls == 3  # selection + two invalid extraction attempts
     assert client.get(accepted["audit_url"]).status_code == 409
+    assert client.get(accepted["data_url"]).status_code == 409
 
 
 def test_poll_while_running_and_capacity(setup_api):
@@ -135,6 +155,7 @@ def test_poll_while_running_and_capacity(setup_api):
     assert generate.started.wait(2)
     assert client.get(accepted["status_url"]).json()["status"] == "selecting"
     assert client.get(accepted["audit_url"]).status_code == 409
+    assert client.get(accepted["data_url"]).status_code == 409
     second = upload(client)
     assert second.status_code == 429
     assert second.headers["retry-after"] == "10"
@@ -150,6 +171,7 @@ def test_bad_upload_and_missing_job(setup_api, monkeypatch):
     monkeypatch.setattr("app.api.extractions.MAX_UPLOAD_BYTES", 5)
     assert upload(client).status_code == 413
     assert client.get("/api/extractions/missing").status_code == 404
+    assert client.get("/api/extractions/missing/data").status_code == 404
 
 
 def test_missing_configuration(setup_api, monkeypatch):
@@ -168,6 +190,7 @@ def test_cors_and_openapi(setup_api):
     assert response.headers["access-control-allow-origin"] == "http://localhost:4200"
     schema = client.get("/openapi.json").json()
     assert "/api/extractions" in schema["paths"]
+    assert "/api/extractions/{job_id}/data" in schema["paths"]
     assert "either" not in json.dumps(schema["components"]["schemas"]["ExtractedRequirements"])
 
 
@@ -183,6 +206,7 @@ def test_upload_cleanup_and_expiry(setup_api, tmp_path, monkeypatch):
     jobs.ttl_seconds = -1
     assert client.get(accepted["status_url"]).status_code == 404
     assert client.get(accepted["audit_url"]).status_code == 404
+    assert client.get(accepted["data_url"]).status_code == 404
 
 
 def test_api_reports_confirmed_blank_pages(setup_api):
