@@ -1,10 +1,27 @@
+from contextlib import asynccontextmanager
+from pathlib import Path
+
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-load_dotenv()
+from app.api.extractions import router as extraction_router
+from app.services.extraction_jobs import ExtractionJobs
 
-app = FastAPI(title="tender-backend", version="0.1.0")
+load_dotenv(Path(__file__).resolve().parents[1] / ".env")
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    from starlette.concurrency import run_in_threadpool
+    app.state.extraction_jobs = ExtractionJobs()
+    try:
+        yield
+    finally:
+        await run_in_threadpool(app.state.extraction_jobs.close)
+
+app = FastAPI(title="tender-backend", version="0.1.0", lifespan=lifespan)
+app.include_router(extraction_router)
 
 app.add_middleware(
     CORSMiddleware,

@@ -1,0 +1,17 @@
+[
+  {
+    "trade_type": "Elektroinstallation",
+    "certifications_required": [
+      "ISO 9001"
+    ],
+    "role_required": "main_contractor",
+    "construction_window_start": "2027-03-01",
+    "construction_window_end": "2027-06-30",
+    "references_required": "Drei Referenzen für Elektroinstallation aus den letzten fünf Jahren",
+    "eigenleistung_min_pct": 40,
+    "guarantee_required_eur": 25000,
+    "estimated_value_eur": 500000,
+    "complexity_markers": [],
+    "hidden_blockers": []
+  }
+]
