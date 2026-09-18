@@ -80,7 +80,7 @@ class AnalysisCriteria(BaseModel):
     object type) so Pydantic validates the exact key set; Story 0.1 should
     mirror it as a named `AnalysisCriteria` TS interface to avoid drift.
     """
-
+    model_config = {"extra": "forbid"}
     reference_eligibility: CriterionResult
     financial_capacity: CriterionResult
     regulatory_familiarity: CriterionResult
