@@ -36,6 +36,9 @@ def test_real_tender_with_gemini_38(tmp_path):
     assert audit["complete"] and audit["model"] == "gemini-3.8-flash"
     assert fields.role_required in {None, "main_contractor", "subcontractor"}
     assert audit["pages_processed"] > 10
+    # Filled form 214 supplies the start date; do not regress to page-text-only reading.
+    assert (fields.construction_window_start == "2026-11-23" or
+            "2026-11-23" in audit["conflicts"].get("construction_window_start", []))
     # Source-grounded check: 01_LV.pdf page 8 explicitly sets 18.12.2026.
     assert (fields.construction_window_end == "2026-12-18" or
             "2026-12-18" in audit["conflicts"].get("construction_window_end", []))

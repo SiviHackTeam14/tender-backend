@@ -38,12 +38,12 @@ def test_tender_allows_nullable_fields():
         distance_from_augsburg_km=5,
         distance_from_plauen_km=300,
         value_eur=None,
-        trade_type="road",
-        role_required="either",
+        trade_type=None,
+        role_required=None,
         deadline="2026-03-01",
         construction_window_start=None,
         construction_window_end=None,
-        references_required="2 road projects >EUR 800k last 5 years",
+        references_required=None,
         certifications_required=[],
         guarantee_required_eur=None,
         eigenleistung_min_pct=None,
@@ -53,6 +53,17 @@ def test_tender_allows_nullable_fields():
     )
     assert tender.value_eur is None
     assert tender.lv_url is None
+    assert tender.trade_type is None
+    assert tender.role_required is None
+    assert tender.references_required is None
+    assert tender.complexity_markers == []
+    import pytest
+    from pydantic import ValidationError
+    with pytest.raises(ValidationError):
+        Tender.model_validate(tender.model_dump() | {"role_required": "either"})
+    assert Tender.model_validate(tender.model_dump() | {
+        "complexity_markers": ["Arbeiten im laufenden Betrieb"]
+    }).complexity_markers == ["Arbeiten im laufenden Betrieb"]
 
 
 def test_tender_analysis_criteria_requires_all_five_keys():
