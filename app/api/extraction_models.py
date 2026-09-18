@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field
 from app.llm.extraction import ExtractedRequirements
 
 JobStatus = Literal["queued", "selecting", "reading", "extracting", "completed", "failed"]
-FieldStatus = Literal["extracted", "not_found", "conflict"]
+FieldStatus = Literal["extracted", "not_found", "conflict", "needs_review"]
 
 
 class Progress(BaseModel):
@@ -29,6 +29,12 @@ class SelectedDocument(BaseModel):
     reason: str
 
 
+class SkippedPage(BaseModel):
+    file: str
+    page: int
+    reason: Literal["confirmed_blank"]
+
+
 class ExtractionResult(BaseModel):
     fields: ExtractedRequirements
     field_status: dict[str, FieldStatus]
@@ -41,6 +47,8 @@ class ExtractionResult(BaseModel):
     pages_processed: int
     chunks_processed: int
     coverage: Literal["selected_pdfs_only"] = "selected_pdfs_only"
+    review_reasons: dict[str, str] = Field(default_factory=dict)
+    skipped_pages: list[SkippedPage] = Field(default_factory=list)
 
 
 class JobError(BaseModel):
@@ -78,4 +86,5 @@ def make_result(fields, audit, selection):
         documents=[SelectedDocument.model_validate(entry) for entry in selection["pdfs"]],
         ignored_non_pdf=selection["ignored_non_pdf"], requires_review=audit["requires_review"],
         pages_processed=audit["pages_processed"], chunks_processed=audit["chunks_processed"],
+        review_reasons=audit["review_reasons"], skipped_pages=audit.get("skipped_pages", []),
     )

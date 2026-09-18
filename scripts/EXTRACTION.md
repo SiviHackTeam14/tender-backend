@@ -37,12 +37,15 @@ python scripts/extract_tender.py /path/to/tender.pdf \
 For a package, pass a directory containing PDF, UTF-8 TXT or Markdown documents
 for **one tender/lot**. All nested files are considered. Unsupported formats fail
 explicitly; extract GAEB/Office documents to text first. TXT form-feed characters
-(`\f`) represent page breaks. A blank/image-only PDF page fails with an OCR-required
-error; OCR and downloading are outside this prototype.
+(`\f`) represent page breaks. Confirmed blank PDF pages are skipped and recorded in `skipped_pages`. Image-only
+or unreadable nonblank pages fail with an OCR-required error. Filled AcroForm values
+and checkbox/radio states are appended to page text; OCR and downloading remain
+outside this prototype.
 
 All pages are processed. Long pages are split into 12,000-character chunks with
 500-character overlap; this is a rough token allowance, not an exact token count.
-Short pages use one request each, so long packages can use substantial API quota.
+ZIP PDFs use overlapping windows across their full text; standalone inputs retain
+page-oriented requests with preceding-page context. Long packages can use substantial API quota.
 No silent total-document truncation occurs. A failed chunk aborts the run.
 Malformed/schema-invalid output gets exactly one retry per chunk. HTTP/network
 errors fail immediately. The CLI exits nonzero on failure and writes no new result.
@@ -54,9 +57,9 @@ file as containing the original document's data. `complete` means all supplied p
 were processed, not that every extracted fact is correct.
 
 Lists are deduplicated exactly. Different non-null scalar values are retained in
-`conflicts`, with the final field set to null and `requires_review=true`. This also
-applies to differently worded trades/references: the prototype deliberately avoids
-an additional model call that might silently resolve contradictions. Check the audit
+`conflicts`, with the final field set to null and `requires_review=true`. Differently worded trades/references remain combined in the final fields, with
+`field_status="needs_review"`, a review reason and `requires_review=true`; their
+compatibility is not assumed. Check the audit
 before using the final fields for a bid decision.
 
 ## Review three live outputs
@@ -153,8 +156,9 @@ Ordinary `pytest tests` skips this network/API-quota test. It does not replace h
 source review. For this package, check that the EUR 250,000 conditional security
 threshold in form 214 is **not** reported as the estimated contract value, percentage
 security is not converted to a euro guarantee, and blank dates/unchecked form options
-are not treated as established requirements. PDF text extraction can lose checkbox
-state and drawn/interactive form values; inspect the actual PDF for those details.
+are not treated as established requirements. AcroForm values and individual widget selection states are now included. Values
+only present in scanned imagery or unsupported non-AcroForm features still require
+visual review/OCR.
 
 ### Observed live run (2026-09-18)
 
@@ -190,3 +194,20 @@ The historical run above records the earlier merger. Re-merging its saved Gemini
 chunks with the new code produces `/tmp/tender-2653880-frontend-result.json` without
 additional model calls. See [FRONTEND-INTEGRATION.md](FRONTEND-INTEGRATION.md) for the
 upload/poll API and the typed Angular service.
+
+### Review fixes
+
+The earlier null start date was a reader defect: form 214 contains a filled
+`ag_214_beginn_datum` value of **23.11.2026**. The PDF reader now preserves it, the
+18.12.2026 end date and checkbox/radio states. Regression tests verify these values
+reach the prompt without a Gemini call. Overlap also crosses page boundaries,
+textual aggregation requires review, and confirmed blank pages are recorded rather
+than aborting the job. The API/Angular contract adds `needs_review`, `review_reasons`
+and `skipped_pages`.
+
+Verification of these fixes: 55 regression tests passed (the full-package live test
+remains opt-in), and the Angular development build passed. A targeted live Gemini
+3.8 Flash run on the real two-page form 214 returned `construction_window_start`
+`2026-11-23`, `construction_window_end` `2026-12-18`, and `estimated_value_eur` null.
+Its output is saved locally at `/tmp/tender-214-fixed-fields.json`; this targeted
+run is not a re-extraction of the entire package.
