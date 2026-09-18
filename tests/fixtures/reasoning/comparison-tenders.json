@@ -1,0 +1,76 @@
+[
+  {
+    "id": "MOCK-sewer",
+    "title": "MOCK comparison: Kanalsanierung Friedberg",
+    "location": "Mock shared operating area",
+    "nuts_code": "MOCK",
+    "distance_from_augsburg_km": 50,
+    "distance_from_plauen_km": 50,
+    "value_eur": 600000,
+    "trade_type": "sewers",
+    "role_required": null,
+    "deadline": "2026-12-15",
+    "construction_window_start": "2027-04-01",
+    "construction_window_end": "2027-09-30",
+    "references_required": "Comparable sewer renewal experience",
+    "certifications_required": [
+      "ISO_9001"
+    ],
+    "guarantee_required_eur": 50000,
+    "eigenleistung_min_pct": null,
+    "hidden_blockers": [],
+    "source_url": "https://example.invalid/reasoning/sewer",
+    "lv_url": null,
+    "complexity_markers": []
+  },
+  {
+    "id": "MOCK-school",
+    "title": "MOCK comparison: Elektroinstallation Schulsanierung Zwickau",
+    "location": "Mock shared operating area",
+    "nuts_code": "MOCK",
+    "distance_from_augsburg_km": 50,
+    "distance_from_plauen_km": 50,
+    "value_eur": 600000,
+    "trade_type": "electrical_installation",
+    "role_required": null,
+    "deadline": "2026-12-15",
+    "construction_window_start": "2027-04-01",
+    "construction_window_end": "2027-09-30",
+    "references_required": "Comparable school refurbishment electrical fit-out experience",
+    "certifications_required": [
+      "ISO_9001"
+    ],
+    "guarantee_required_eur": 50000,
+    "eigenleistung_min_pct": null,
+    "hidden_blockers": [],
+    "source_url": "https://example.invalid/reasoning/school",
+    "lv_url": null,
+    "complexity_markers": []
+  },
+  {
+    "id": "MOCK-high-voltage",
+    "title": "MOCK comparison: Umspannwerk-Ausbau Reichenbach",
+    "location": "Mock shared operating area",
+    "nuts_code": "MOCK",
+    "distance_from_augsburg_km": 50,
+    "distance_from_plauen_km": 50,
+    "value_eur": 600000,
+    "trade_type": "high_voltage_electrical",
+    "role_required": null,
+    "deadline": "2026-12-15",
+    "construction_window_start": "2027-04-01",
+    "construction_window_end": "2027-09-30",
+    "references_required": "Comparable high-voltage substation installation experience",
+    "certifications_required": [
+      "high_voltage_switchgear_qualification"
+    ],
+    "guarantee_required_eur": 50000,
+    "eigenleistung_min_pct": null,
+    "hidden_blockers": [
+      "The high-voltage substation installation is mandatory and cannot be excluded from the bid scope"
+    ],
+    "source_url": "https://example.invalid/reasoning/high-voltage",
+    "lv_url": null,
+    "complexity_markers": []
+  }
+]

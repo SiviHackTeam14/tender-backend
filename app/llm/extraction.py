@@ -222,19 +222,23 @@ def list_gemini_models(api_key: str) -> list[str]:
 
 
 class GeminiClient:
-    def __init__(self, api_key: str, model: str):
+    def __init__(self, api_key: str, model: str, *, system_instruction: str | None = None):
         if not api_key or not re.fullmatch(r"[A-Za-z0-9._-]+", model):
             raise ValueError("Supply GEMINI_API_KEY and a valid Gemini model ID")
         self.api_key, self.model = api_key, model
+        self.system_instruction = system_instruction
 
     def __call__(self, prompt: str, schema: dict) -> str:
         import requests
+        body = {"contents": [{"role": "user", "parts": [{"text": prompt}]}],
+                "generationConfig": {"responseMimeType": "application/json",
+                                     "responseJsonSchema": schema}}
+        if self.system_instruction:
+            body["systemInstruction"] = {"parts": [{"text": self.system_instruction}]}
         response = requests.post(
             f"https://generativelanguage.googleapis.com/v1beta/models/{self.model}:generateContent",
             headers={"x-goog-api-key": self.api_key},
-            json={"contents": [{"role": "user", "parts": [{"text": prompt}]}],
-                  "generationConfig": {"responseMimeType": "application/json",
-                                       "responseJsonSchema": schema}},
+            json=body,
             timeout=120,
         )
         check_gemini_response(response, self.api_key)
