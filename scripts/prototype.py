@@ -332,7 +332,15 @@ def run_pipeline(
     today: Optional[date] = None,
     verbose: bool = True,
 ) -> tuple[list[dict], dict[str, int]]:
-    """Join, filter, dedup, and cap. Returns (survivors, stage_counts)."""
+    """Join, dedup, filter, and cap. Returns (survivors, stage_counts).
+
+    Dedup happens FIRST, before any of the competition/CPV/region/deadline
+    filters. Each notice is only ever represented once (its highest
+    noticeVersion), so a stale older revision can never survive just because
+    it happened to pass a filter that the real latest revision fails (e.g.
+    v1 still open, v2 — the current truth — already expired). Filters are
+    then evaluated only against that one latest-revision row per notice.
+    """
     today = today or date.today()
 
     notices = tables.get("notice", [])
@@ -348,7 +356,10 @@ def run_pipeline(
 
     counts: dict[str, int] = {"fetched": len(notices)}
 
-    competition = [n for n in notices if n.get("noticeType") in COMPETITION_NOTICE_TYPES]
+    deduped = dedup_latest_version(notices)
+    counts["deduped"] = len(deduped)
+
+    competition = [n for n in deduped if n.get("noticeType") in COMPETITION_NOTICE_TYPES]
     counts["competition"] = len(competition)
 
     cpv_filtered = [n for n in competition if matches_cpv(notice_key(n), classification_index, cpv_prefixes)]
@@ -367,10 +378,7 @@ def run_pipeline(
         open_notices = list(region_filtered)
     counts["still_open"] = len(open_notices)
 
-    deduped = dedup_latest_version(open_notices)
-    counts["deduped"] = len(deduped)
-
-    capped = cap_by_publication_date(deduped, max_fetch)
+    capped = cap_by_publication_date(open_notices, max_fetch)
     counts["capped"] = len(capped)
 
     survivors = [
@@ -380,11 +388,11 @@ def run_pipeline(
 
     if verbose:
         print(f"Fetched:       {counts['fetched']}")
+        print(f"Deduped:       {counts['deduped']}")
         print(f"Competition:   {counts['competition']}")
         print(f"CPV 45:        {counts['cpv45']}")
         print(f"Region match:  {counts['region']}")
         print(f"Still open:    {counts['still_open']}")
-        print(f"Deduped:       {counts['deduped']}")
         print(f"Capped:        {counts['capped']}")
 
     return survivors, counts

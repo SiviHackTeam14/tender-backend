@@ -80,7 +80,7 @@ def test_fetch_day_success_returns_tables(monkeypatch, prototype, fixture_zip_by
     assert set(tables.keys()) == {
         "notice", "classification", "placeOfPerformance", "purpose", "organisation", "submissionTerms",
     }
-    assert len(tables["notice"]) == 9
+    assert len(tables["notice"]) == 11
 
 
 def test_fetch_day_non_200_returns_empty_dict(monkeypatch, prototype):
@@ -119,8 +119,8 @@ def test_fetch_all_days_continues_past_bad_days(monkeypatch, prototype, fixture_
     monkeypatch.setattr(prototype.requests, "get", _flaky_get)
     tables = prototype.fetch_all_days(days_back=4)
     assert calls["n"] == 4
-    # Two good days x 9 notice rows each.
-    assert len(tables["notice"]) == 18
+    # Two good days x 11 notice rows each.
+    assert len(tables["notice"]) == 22
 
 
 # ── run_pipeline against the joined fixture ──────────────────────────────
@@ -154,7 +154,7 @@ def test_wrong_type_cpv_nuts_and_expired_are_excluded(prototype):
     assert "notice-wrong-cpv" not in ids
     assert "notice-wrong-nuts" not in ids
     assert "notice-expired" not in ids
-    assert counts["fetched"] == 9
+    assert counts["fetched"] == 11
 
 
 def test_lot_only_cpv_is_kept_and_cpv_comes_from_joined_table(prototype):
@@ -199,13 +199,25 @@ def test_expired_deadline_dropped_unknown_kept(prototype):
     assert happy["publicOpeningDate"] == "2026-12-01T10:00:00+01:00"
 
 
+def test_dedup_runs_before_filters_so_stale_revision_cannot_survive(prototype):
+    """Regression: v1 (older) still open, v2 (latest/current truth) expired.
+
+    Filtering before dedup would let the stale-but-still-open v1 slip
+    through (survivors={v1}, "dedup" of a single row is a no-op). Dedup
+    must run first so only v2 (the real current state) is ever filtered,
+    and the whole notice is dropped because v2 has expired.
+    """
+    survivors, _counts = _pipeline_survivors(prototype)
+    ids = {s["noticeIdentifier"] for s in survivors}
+    assert "notice-latest-expired" not in ids
+
+
 def test_stage_counts_are_monotonically_non_increasing(prototype):
     _survivors, counts = _pipeline_survivors(prototype)
-    stages = ["fetched", "competition", "cpv45", "region", "still_open"]
+    stages = ["fetched", "deduped", "competition", "cpv45", "region", "still_open", "capped"]
     values = [counts[s] for s in stages]
     assert values == sorted(values, reverse=True)
-    assert counts["deduped"] <= counts["still_open"]
-    assert counts["capped"] == counts["deduped"]  # well under MAX_FETCH here
+    assert counts["capped"] == counts["still_open"]  # well under MAX_FETCH here
 
 
 # ── dedup / cap / deadline-fallback logic on synthetic tables ───────────
