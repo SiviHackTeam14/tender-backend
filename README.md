@@ -1,3 +1,35 @@
+# TenderPilot — Backend
+
+**Hackathon:** SiviHack 2026 · Track 2 · Sponsor: Arctis AI
+**Team:** Three Out of Forty
+
+## What is this product?
+
+A construction company can only bid on ~3 of the ~40 public tenders published every
+week. Someone has to read every "Ausschreibung" (tenders) by
+hand before they even know if a tender is worth chasing.
+
+**TenderPilot** automates the reading step first, and is designed to grow into a
+full triage assistant:
+
+1. **Upload a tender ZIP** → the backend picks the relevant PDFs with Gemini, reads
+   them, and extracts 12 structured requirement fields (trade type, required role,
+   construction window, references required, guarantee amount, estimated value,
+   certifications, complexity markers, hidden blockers, ...).
+2. *(Designed, not wired up yet)* A **hard filter** (no LLM — geography, deadline,
+   budget, role) narrows ~40 tenders down to the ones worth reasoning about.
+3. *(Designed, not wired up yet)* A **Gemini bid/no-bid reasoning** step scores the
+   survivors against a company profile on 5 criteria (reference eligibility,
+   financial capacity, regulatory familiarity, competitive position, strategic
+   fit) and explains, in plain language, which 3 tenders deserve the estimating
+   team's time this week — and why the rest don't.
+
+This backend is the **FastAPI service** that currently exposes step 1
+(document extraction) as a REST API for the [Angular frontend](../frontend). The
+hard-filter and reasoning modules already exist in the codebase (`app/filters`,
+`app/llm/reasoning.py`) but are not yet called from the API — see
+[Current limitations](#current-limitations).
+
 ## Setup and running the demo
 
 Requires **Python 3.11+**, **Node.js 22.22.3+ or 24.15+**, npm, and a Gemini API key.
@@ -168,3 +200,51 @@ and adapter tests:
 ```bash
 npm run test:extraction
 ```
+## Tech stack
+
+| Layer | Choice |
+|---|---|
+| API framework | [FastAPI](https://fastapi.tiangolo.com/) + Uvicorn |
+| Validation | Pydantic v2 |
+| LLM | Google Gemini (`gemini-3.8-flash` by default) via `generateContent` REST API |
+| PDF parsing | `pdfplumber` (text, AcroForm fields, checkbox/radio states) |
+| Language | Python 3.11+ |
+| Testing | pytest, httpx (fake Gemini transport for offline tests) |
+
+## Dataset / API / library used
+
+- **Public tender data:** [oeffentlichevergabe.de](https://oeffentlichevergabe.de)
+  notice-export API (CC0 licence, no API key required) — the source for German
+  public construction tenders (CPV prefix `45`, filtered by NUTS region).
+- **Real-world sample tender:** the `33_61_2026_Ausschreibungsunterlagen` folder
+  in this repo (Rolandbrunnen Nordhausen, incl. a GAEB `.x83` bill-of-quantities
+  file) used for extraction testing/fixtures.
+- **LLM:** Google Gemini API (`gemini-3.8-flash`) — PDF title selection and
+  structured requirement extraction from the LV documents.
+- **Python libraries** (`requirements.txt`):
+  ```
+  fastapi
+  uvicorn[standard]
+  pydantic>=2,<3
+  python-dotenv
+  requests
+  pytest
+  pdfplumber>=0.11,<1
+  python-multipart>=0.0.20,<1
+  ```
+  Dev/test extras (`requirements-dev.txt`): `pytest`, `httpx`.
+  Extraction extras (`requirements-extraction.txt`): `Pillow` (image handling
+  for scanned/image-only pages).
+
+## Current limitations
+
+- **Single-process, in-memory jobs.** Extraction jobs and results live in
+  memory for one hour and are lost on restart. Run exactly **one** Uvicorn
+  worker — this is a local, single-user demo setup, not a production
+  deployment (no auth, no persistent/shared job storage).
+- **Upload limits.** 50 MiB max ZIP size, 200 PDFs max, 250 MiB max
+  uncompressed PDF data per archive.
+- **Image-only pages need OCR.** Genuinely blank pages are skipped
+  automatically; non-blank scanned/image-only pages that can't be read fail
+  extraction with an explicit error rather than silently guessing.
+  
