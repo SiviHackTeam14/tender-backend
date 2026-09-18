@@ -5,7 +5,10 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.api.analyze import router as analyze_router
 from app.api.extractions import router as extraction_router
+from app.api.profiles import router as profiles_router
+from app.api.tenders import router as tenders_router
 from app.services.extraction_jobs import ExtractionJobs
 
 load_dotenv(Path(__file__).resolve().parents[1] / ".env")
@@ -22,6 +25,9 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="tender-backend", version="0.1.0", lifespan=lifespan)
 app.include_router(extraction_router)
+app.include_router(profiles_router)
+app.include_router(tenders_router)
+app.include_router(analyze_router)
 
 app.add_middleware(
     CORSMiddleware,
