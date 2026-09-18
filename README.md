@@ -6,7 +6,7 @@
 ## What is this product?
 
 A construction company can only bid on ~3 of the ~40 public tenders published every
-week. Someone has to read every "Leistungsverzeichnis" (bill of quantities, LV) by
+week. Someone has to read every "Ausschreibung" (tenders) by
 hand before they even know if a tender is worth chasing.
 
 **TenderPilot** automates the reading step first, and is designed to grow into a
@@ -130,13 +130,6 @@ Gemini transport (no live API calls / cost).
 
 ## Current limitations
 
-- **Extraction only, end to end.** The live API path is
-  `upload ZIP → Gemini extraction → 12 JSON fields`. It does **not** apply the
-  hard filter or produce a bid/no-bid verdict yet — `app/filters/hard_filter.py`
-  and `app/llm/reasoning.py` exist and are tested, but are not called by
-  `app/api/extractions.py`.
-- **No company profile input.** Extraction results are per-document, not
-  matched against a company's capabilities.
 - **Single-process, in-memory jobs.** Extraction jobs and results live in
   memory for one hour and are lost on restart. Run exactly **one** Uvicorn
   worker — this is a local, single-user demo setup, not a production
@@ -146,6 +139,4 @@ Gemini transport (no live API calls / cost).
 - **Image-only pages need OCR.** Genuinely blank pages are skipped
   automatically; non-blank scanned/image-only pages that can't be read fail
   extraction with an explicit error rather than silently guessing.
-- **No fetch pipeline wired to the API.** The `oeffentlichevergabe.de` fetch
-  script and platform adapters (`app/fetch/`) exist for building a tender
-  dataset offline, but are not exposed as an endpoint.
+  
