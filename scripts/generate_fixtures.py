@@ -236,7 +236,7 @@ TENDERS = [
         "distance_from_plauen_km": 160,
         "value_eur": None,
         "trade_type": "water_technology",
-        "role_required": "either",
+        "role_required": None,
         "deadline": "2026-10-07",
         "construction_window_start": None,
         "construction_window_end": None,

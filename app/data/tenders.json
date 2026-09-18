@@ -157,7 +157,7 @@
     "distance_from_plauen_km": 160,
     "value_eur": null,
     "trade_type": "water_technology",
-    "role_required": "either",
+    "role_required": null,
     "deadline": "2026-10-07",
     "construction_window_start": null,
     "construction_window_end": null,

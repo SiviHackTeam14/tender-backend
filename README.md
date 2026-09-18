@@ -57,3 +57,10 @@ ZIP uploads and polling are available at `/api/extractions`. Start the backend w
 `uvicorn app.main:app --port 8000` (one worker) and open `/docs` for the API explorer.
 See [frontend integration guide](scripts/FRONTEND-INTEGRATION.md) for the Angular
 service, API contract, result statuses, setup and deployment limits.
+
+## Bid reasoning
+
+`app.llm.reasoning.analyze(profile, survivors)` returns validated five-criterion
+`TenderAnalysis` results, retries invalid model output once, and explains each
+BID/MAYBE/REJECT decision. See [scripts/REASONING.md](scripts/REASONING.md) for
+integration, CLI examples, the decision policy and Profile A/B comparison tests.
