@@ -1,0 +1,181 @@
+{
+  "model": "gemini-3.8-flash",
+  "run_date": "2026-09-18",
+  "note": "Actual model responses to synthetic tenders, inspected against the supplied profiles; illustrative, not a deterministic golden answer or independently verified tender evidence.",
+  "profiles_source": "app/data/profiles.json",
+  "tenders_source": "tests/fixtures/reasoning/comparison-tenders.json",
+  "results": {
+    "profile-a": [
+      {
+        "tender_id": "MOCK-sewer",
+        "verdict": "BID",
+        "summary": "The project directly matches the company's core sewer focus, complies with ISO 9001 requirements, falls comfortably within contract and guarantee limits, and aligns with the operational availability schedule.",
+        "hard_reject_reason": null,
+        "criteria": {
+          "reference_eligibility": {
+            "status": "PASS",
+            "reason": "The profile lists sewer renewal references, directly satisfying the requirement for comparable sewer renewal experience."
+          },
+          "financial_capacity": {
+            "status": "PASS",
+            "reason": "The tender value of EUR 600,000.0 falls well within the EUR 400,000.0 to EUR 4,000,000.0 range, and the EUR 50,000.0 guarantee is far below the EUR 1,500,000.0 limit."
+          },
+          "regulatory_familiarity": {
+            "status": "PASS",
+            "reason": "The profile lists the mandatory ISO_9001 certification and indicates very high regulatory familiarity."
+          },
+          "competitive_position": {
+            "status": "WARNING",
+            "reason": "A favorable site distance of 50.0 km and sewer specialization support delivery, but competitor pricing and local bidding dynamics remain unknown."
+          },
+          "strategic_fit": {
+            "status": "PASS",
+            "reason": "The sewer trade matches the company's stated focus areas, the construction window from April to September 2027 fits availability from March 2027, and the 50.0 km distance is within the 150.0 km limit."
+          }
+        }
+      },
+      {
+        "tender_id": "MOCK-school",
+        "verdict": "MAYBE",
+        "summary": "Bidding requires resolving whether the company can satisfy electrical installation references and deliver an electrical trade scope that lies outside its core civil engineering focus.",
+        "hard_reject_reason": null,
+        "criteria": {
+          "reference_eligibility": {
+            "status": "WARNING",
+            "reason": "The profile does not list electrical fit-out references to satisfy the requirement for comparable school refurbishment electrical experience, requiring external confirmation."
+          },
+          "financial_capacity": {
+            "status": "PASS",
+            "reason": "The contract value of EUR 600,000.0 and guarantee of EUR 50,000.0 fit within the company's EUR 400,000.0 to EUR 4,000,000.0 contract range and EUR 1,500,000.0 guarantee limit."
+          },
+          "regulatory_familiarity": {
+            "status": "PASS",
+            "reason": "The profile lists the required ISO_9001 certification and indicates very high regulatory familiarity."
+          },
+          "competitive_position": {
+            "status": "WARNING",
+            "reason": "While the 50.0 km distance is within the operational range, the firm lacks documented electrical specialization and competitor pricing data is missing."
+          },
+          "strategic_fit": {
+            "status": "WARNING",
+            "reason": "The electrical_installation trade scope is outside the company's focus areas of roadworks, sewers, pipelines, and earthworks, requiring confirmation of trade delivery capability."
+          }
+        }
+      },
+      {
+        "tender_id": "MOCK-high-voltage",
+        "verdict": "MAYBE",
+        "summary": "Bidding requires resolving the missing high_voltage_switchgear_qualification and verifying capacity to execute non-core high-voltage electrical works that cannot be excluded from the scope.",
+        "hard_reject_reason": null,
+        "criteria": {
+          "reference_eligibility": {
+            "status": "WARNING",
+            "reason": "The profile lists civil engineering experience but lacks high-voltage substation installation references, leaving compliance unconfirmed."
+          },
+          "financial_capacity": {
+            "status": "PASS",
+            "reason": "The tender value of EUR 600,000.0 and guarantee requirement of EUR 50,000.0 are well within the company's EUR 400,000.0 to EUR 4,000,000.0 contract limits and EUR 1,500,000.0 guarantee ceiling."
+          },
+          "regulatory_familiarity": {
+            "status": "WARNING",
+            "reason": "The mandatory high_voltage_switchgear_qualification is not listed in the company profile's certifications, representing an unconfirmed requirement."
+          },
+          "competitive_position": {
+            "status": "WARNING",
+            "reason": "The 50.0 km distance is within the 150.0 km limit, but the company lacks documented high-voltage advantages and competitor pricing is unknown."
+          },
+          "strategic_fit": {
+            "status": "WARNING",
+            "reason": "The high-voltage trade scope falls outside the company's civil focus areas, and the mandatory scope blocker prevents carving out specialized electrical tasks."
+          }
+        }
+      }
+    ],
+    "profile-b": [
+      {
+        "tender_id": "MOCK-sewer",
+        "verdict": "MAYBE",
+        "summary": "The decisive unresolved check is whether the company can qualify for and execute a sewer renewal project, as its focus and references are strictly in electrical installations rather than civil underground works.",
+        "hard_reject_reason": null,
+        "criteria": {
+          "reference_eligibility": {
+            "status": "WARNING",
+            "reason": "The tender requires comparable sewer renewal experience, but the profile lists only building electrical references such as school refurbishments and hospital wards, leaving required civil sewer references unconfirmed."
+          },
+          "financial_capacity": {
+            "status": "PASS",
+            "reason": "The tender value of 600,000 EUR falls within the profile's contract range of 80,000 to 900,000 EUR, and the required 50,000 EUR guarantee is well below the 300,000 EUR maximum limit."
+          },
+          "regulatory_familiarity": {
+            "status": "PASS",
+            "reason": "The profile lists the mandatory ISO_9001 certification and indicates a high level of regulatory familiarity."
+          },
+          "competitive_position": {
+            "status": "WARNING",
+            "reason": "A 50 km distance from Plauen is well within the 200 km limit, but sewer works fall outside the firm's electrical specialization and local competitor pricing is unknown."
+          },
+          "strategic_fit": {
+            "status": "WARNING",
+            "reason": "The trade type sewers deviates completely from the profile's focus areas of electrical installation, fire alarm, and building automation, requiring verification of delivery capability."
+          }
+        }
+      },
+      {
+        "tender_id": "MOCK-school",
+        "verdict": "BID",
+        "summary": "Supported business case based on core specialization in electrical installation, matching school refurbishment references, full ISO 9001 certification, and project delivery located 50 km from Plauen.",
+        "hard_reject_reason": null,
+        "criteria": {
+          "reference_eligibility": {
+            "status": "PASS",
+            "reason": "The profile explicitly lists school refurbishments under can_show_references, fulfilling the requirement for comparable school refurbishment electrical fit-out experience."
+          },
+          "financial_capacity": {
+            "status": "PASS",
+            "reason": "The contract value of 600,000 EUR sits within the profile's range of 80,000 to 900,000 EUR, and the 50,000 EUR guarantee requirement is safely within the 300,000 EUR limit."
+          },
+          "regulatory_familiarity": {
+            "status": "PASS",
+            "reason": "The profile lists the required ISO_9001 certification and states high regulatory familiarity."
+          },
+          "competitive_position": {
+            "status": "WARNING",
+            "reason": "The project is located 50 km from Plauen within the 200 km operating radius and aligns with core focus areas, although specific competitor pricing and counts are unknown."
+          },
+          "strategic_fit": {
+            "status": "PASS",
+            "reason": "The trade electrical_installation matches the firm's primary focus area, and the construction window from April to September 2027 fits availability starting November 2026."
+          }
+        }
+      },
+      {
+        "tender_id": "MOCK-high-voltage",
+        "verdict": "REJECT",
+        "summary": "Explicit blocker as the tender mandates high-voltage substation installation and references, whereas the company profile explicitly lists high voltage under cannot_show.",
+        "hard_reject_reason": null,
+        "criteria": {
+          "reference_eligibility": {
+            "status": "BLOCK",
+            "reason": "The tender mandates comparable high-voltage substation installation experience, but the company profile explicitly lists high voltage under cannot_show."
+          },
+          "financial_capacity": {
+            "status": "PASS",
+            "reason": "The 600,000 EUR order value and 50,000 EUR guarantee are within the stated limits of 80,000 to 900,000 EUR contract value and 300,000 EUR guarantee."
+          },
+          "regulatory_familiarity": {
+            "status": "WARNING",
+            "reason": "The tender requires high_voltage_switchgear_qualification, which is not listed in the profile's certifications and remains unconfirmed."
+          },
+          "competitive_position": {
+            "status": "WARNING",
+            "reason": "The site is within 50 km of Plauen, but lack of high-voltage specialization and unknown market pricing create major competitive risks."
+          },
+          "strategic_fit": {
+            "status": "BLOCK",
+            "reason": "The mandatory high-voltage substation scope directly contradicts the profile's explicit exclusion of high-voltage works."
+          }
+        }
+      }
+    ]
+  }
+}

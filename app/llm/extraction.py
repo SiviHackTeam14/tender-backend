@@ -4,6 +4,7 @@ from __future__ import annotations
 import json
 import logging
 import re
+from itertools import groupby
 from datetime import date
 from typing import Annotated, Callable, Literal
 
@@ -64,6 +65,10 @@ Preserve reference counts, project types and lookback periods in German.
 complexity_markers: explicit execution complexity, e.g. work in an occupied building.
 hidden_blockers: explicit eligibility/delivery restrictions, not invented bidder risks.
 Do not interpret silence as zero, no restriction, or permission.
+PDF_FORM_FIELDS contains current AcroForm values omitted from the page text.
+Use filled date/text values with their field names, labels and nearby printed text.
+For checkbox/radio options, selected=false means that option is NOT selected;
+selected=null is unknown. A group value does not select every widget in the group.
 Blank forms and unselected checkbox options are not established requirements.
 Do not treat example dates, thresholds in conditional standard clauses, or empty
 price/guarantee templates as tender-specific values. Preserve conditional wording
@@ -101,46 +106,44 @@ def extract_pages(pages: list[tuple[str, int, str]], generate: Callable,
     if not pages:
         raise ExtractionError("No documents/pages supplied")
     page_count = len(pages)
-    source_pages = {}
-    if pack_pages:
-        # Keep adjacent pages together for context; never mix different PDFs.
-        packed = []
-        for filename, page, text in pages:
+    prepared = []
+    for filename, group in groupby(pages, key=lambda item: item[0]):
+        parts, spans, length = [], [], 0
+        for _, page, text in group:
             if not text.strip():
                 raise ExtractionError(f"No usable text: {filename}, page {page}; OCR is required")
-            marked = f"[Page {page}]\n{text}"
-            if packed and packed[-1][0] == filename and len(packed[-1][2]) + len(marked) + 2 <= chunk_chars:
-                old_file, first_page, old_text = packed[-1]
-                packed[-1] = (old_file, first_page, old_text + "\n\n" + marked)
-                source_pages[(filename, first_page)].append(page)
-            else:
-                packed.append((filename, page, marked))
-                source_pages[(filename, page)] = [page]
-        pages = packed
+            if parts:
+                parts.append("\n\n")
+                length += 2
+            marked = f"[Page {page}]\n{text}" if pack_pages else text
+            spans.append((length, length + len(marked), page))
+            parts.append(marked)
+            length += len(marked)
+        document = "".join(parts)
+        # Packed mode slides over the whole PDF, not independent page groups.
+        # Page mode also carries context from the preceding page.
+        windows = [(0, length)] if pack_pages else [(max(0, start - overlap), end)
+                                                   for start, end, _ in spans]
+        for start, limit in windows:
+            while start < limit:
+                end = min(start + chunk_chars, limit)
+                source_pages = [page for lo, hi, page in spans if lo < end and hi > start]
+                prepared.append({"file": filename, "page": source_pages[0], "offset": start,
+                                 "source_pages": source_pages, "source": document[start:end]})
+                if end == limit:
+                    break
+                start = end - overlap
+    total_chunks = len(prepared)
     chunks = []
-    total_chunks = sum(1 + max(0, (len(text) - chunk_chars + chunk_chars - overlap - 1) // (chunk_chars - overlap))
-                       for _, _, text in pages)
     if progress:
         progress(0, total_chunks)
-    for filename, page, text in pages:
-        if not text.strip():
-            raise ExtractionError(f"No usable text: {filename}, page {page}; OCR is required")
-        start = 0
-        while start < len(text):
-            excerpt = text[start:start + chunk_chars]
-            logging.getLogger(__name__).info(
-                "Extracting %s | pages %s | offset %s", filename,
-                source_pages.get((filename, page), [page]), start,
-            )
-            result = extract_chunk(excerpt, generate)
-            chunks.append({"file": filename, "page": page, "offset": start,
-                           "source_pages": source_pages.get((filename, page), [page]),
-                           "source": excerpt, "fields": result.model_dump()})
-            if progress:
-                progress(len(chunks), total_chunks)
-            if start + chunk_chars >= len(text):
-                break
-            start += chunk_chars - overlap
+    for chunk in prepared:
+        logging.getLogger(__name__).info("Extracting %s | pages %s | offset %s",
+                                         chunk["file"], chunk["source_pages"], chunk["offset"])
+        result = extract_chunk(chunk["source"], generate)
+        chunks.append(chunk | {"fields": result.model_dump()})
+        if progress:
+            progress(len(chunks), total_chunks)
     return merge_chunks(chunks, page_count)
 
 
@@ -170,10 +173,14 @@ def merge_chunks(chunks: list[dict], page_count: int) -> tuple[ExtractedRequirem
         if merged["construction_window_start"] > merged["construction_window_end"]:
             conflicts["construction_window"] = [merged["construction_window_start"], merged["construction_window_end"]]
             merged["construction_window_start"] = merged["construction_window_end"] = None
+    review_reasons = {field: "Different text findings were combined; check their scope and compatibility."
+                      for field in aggregated}
     audit = {"complete": True, "pages_processed": page_count, "chunks_processed": len(chunks),
-             "requires_review": bool(conflicts), "conflicts": conflicts, "aggregated_fields": aggregated,
+             "requires_review": bool(conflicts or review_reasons), "conflicts": conflicts,
+             "aggregated_fields": aggregated, "review_reasons": review_reasons,
              "field_status": {field: ("conflict" if field in conflicts or
                                (field.startswith("construction_window_") and "construction_window" in conflicts)
+                               else "needs_review" if field in review_reasons
                                else "not_found" if value is None or value == [] or value == ""
                                else "extracted") for field, value in merged.items()},
              "chunks": chunks}
@@ -215,19 +222,23 @@ def list_gemini_models(api_key: str) -> list[str]:
 
 
 class GeminiClient:
-    def __init__(self, api_key: str, model: str):
+    def __init__(self, api_key: str, model: str, *, system_instruction: str | None = None):
         if not api_key or not re.fullmatch(r"[A-Za-z0-9._-]+", model):
             raise ValueError("Supply GEMINI_API_KEY and a valid Gemini model ID")
         self.api_key, self.model = api_key, model
+        self.system_instruction = system_instruction
 
     def __call__(self, prompt: str, schema: dict) -> str:
         import requests
+        body = {"contents": [{"role": "user", "parts": [{"text": prompt}]}],
+                "generationConfig": {"responseMimeType": "application/json",
+                                     "responseJsonSchema": schema}}
+        if self.system_instruction:
+            body["systemInstruction"] = {"parts": [{"text": self.system_instruction}]}
         response = requests.post(
             f"https://generativelanguage.googleapis.com/v1beta/models/{self.model}:generateContent",
             headers={"x-goog-api-key": self.api_key},
-            json={"contents": [{"role": "user", "parts": [{"text": prompt}]}],
-                  "generationConfig": {"responseMimeType": "application/json",
-                                       "responseJsonSchema": schema}},
+            json=body,
             timeout=120,
         )
         check_gemini_response(response, self.api_key)

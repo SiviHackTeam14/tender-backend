@@ -1,12 +1,12 @@
-"""Shared data contracts frozen in Epic 0. Field names/types must match the
+"""Shared data contracts, extended for nullable document extraction. Types match the
 TypeScript interfaces in `frontend/src/app/models/` exactly (Story 0.1)."""
 
 from typing import Literal, Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 Role = Literal["main_contractor", "subcontractor"]
-RoleRequired = Literal["main_contractor", "subcontractor", "either"]
+RoleRequired = Literal["main_contractor", "subcontractor"]
 RegFamiliarity = Literal["low", "medium", "high", "very_high"]
 CriterionStatus = Literal["PASS", "WARNING", "BLOCK"]
 Verdict = Literal["BID", "MAYBE", "REJECT"]
@@ -52,16 +52,17 @@ class Tender(BaseModel):
     distance_from_augsburg_km: float
     distance_from_plauen_km: float
     value_eur: Optional[float]
-    trade_type: str
-    role_required: RoleRequired
+    trade_type: Optional[str]
+    role_required: Optional[RoleRequired]
     deadline: str  # ISO date
     construction_window_start: Optional[str]
     construction_window_end: Optional[str]
-    references_required: str
+    references_required: Optional[str]
     certifications_required: list[str]
     guarantee_required_eur: Optional[float]
     eigenleistung_min_pct: Optional[float]
     hidden_blockers: list[str]
+    complexity_markers: list[str] = Field(default_factory=list)
     source_url: str
     lv_url: Optional[str]
 

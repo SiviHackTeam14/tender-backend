@@ -78,6 +78,7 @@ class ExtractionJobs:
                 self._update(job_id, progress=Progress(completed_chunks=done, total_chunks=total))
             fields, audit = extract_pages(pages, generate, pack_pages=True, progress=progress)
             audit["selection"] = selection
+            audit["skipped_pages"] = selection["skipped_pages"]
             audit["coverage"] = "All pages of selected PDFs only"
             audit["model"] = self.jobs[job_id].model
             result = make_result(fields, audit, selection)

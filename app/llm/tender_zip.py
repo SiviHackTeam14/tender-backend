@@ -93,19 +93,17 @@ def read_selected_pages(path, report):
     selected = [entry for entry in report["pdfs"] if entry["decision"] == "include"]
     if not selected:
         raise ExtractionError("No PDF titles selected; inspect the selection report")
+    from app.llm.pdf_reader import read_pdf_pages
     pages = []
+    report["skipped_pages"] = []
     with ZipFile(path) as archive:
         for entry in selected:
             if entry["bytes"] > 100 * 1024 * 1024:
                 raise ExtractionError(f"Selected PDF exceeds 100 MB: {entry['path']}")
             with pdfplumber.open(io.BytesIO(archive.read(entry["path"]))) as pdf:
-                if not pdf.pages:
-                    raise ExtractionError(f"Selected PDF has no pages: {entry['path']}")
-                for number, page in enumerate(pdf.pages, 1):
-                    text = page.extract_text() or ""
-                    if not text.strip():
-                        raise ExtractionError(f"No usable text: {entry['path']}, page {number}; OCR required")
-                    pages.append((entry["path"], number, text))
+                pages.extend(read_pdf_pages(pdf, entry["path"], report["skipped_pages"]))
+    if not pages:
+        raise ExtractionError("Selected PDFs contain no usable content (all pages are blank)")
     return pages
 
 

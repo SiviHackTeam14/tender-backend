@@ -183,3 +183,35 @@ def test_upload_cleanup_and_expiry(setup_api, tmp_path, monkeypatch):
     jobs.ttl_seconds = -1
     assert client.get(accepted["status_url"]).status_code == 404
     assert client.get(accepted["audit_url"]).status_code == 404
+
+
+def test_api_reports_confirmed_blank_pages(setup_api):
+    from tests.test_pdf_reader import text_and_blank_pdf
+    client, _, _ = setup_api
+    payload = io.BytesIO()
+    with ZipFile(payload, 'w') as z:
+        z.writestr('LV.pdf', text_and_blank_pdf())
+        z.writestr('Datenschutz.pdf', b'not opened')
+    accepted = client.post('/api/extractions', files={'file': ('blank.zip', payload.getvalue())}).json()
+    job = finished(client, accepted['status_url'])
+    assert job['status'] == 'completed', job
+    assert job['result']['pages_processed'] == 2
+    assert job['result']['skipped_pages'] == [{'file': 'LV.pdf', 'page': 2, 'reason': 'confirmed_blank'}]
+    audit = client.get(accepted['audit_url']).json()
+    assert audit['skipped_pages'] == job['result']['skipped_pages']
+    assert audit['chunks'][0]['source_pages'] == [1, 3]
+
+
+def test_result_contract_exposes_unverified_aggregation():
+    from app.api.extraction_models import make_result
+    from app.llm.extraction import merge_chunks
+    chunks = [dict(file='LV.pdf', page=i, source_pages=[i], source='text',
+                   fields=empty() | {'references_required': value}) for i, value in enumerate([
+        'Keine Referenzen erforderlich.', 'Drei Referenzen zwingend erforderlich.',
+    ], 1)]
+    fields, audit = merge_chunks(chunks, 2)
+    result = make_result(fields, audit, {'pdfs': [], 'ignored_non_pdf': []})
+    assert result.field_status['references_required'] == 'needs_review'
+    assert result.requires_review
+    assert 'references_required' in result.review_reasons
+    assert len(result.evidence['references_required']) == 2

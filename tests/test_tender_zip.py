@@ -44,6 +44,8 @@ def test_only_selected_pdf_is_read(tmp_path, monkeypatch):
     report = select_titles(inventory_zip(path), lambda *args: json.dumps(decisions()))
     opened = []
     class Page:
+        from types import SimpleNamespace
+        page_obj = SimpleNamespace(attrs={})
         def extract_text(self):
             return "LV text"
     class PDF:
