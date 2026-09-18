@@ -1,0 +1,15 @@
+[
+  {
+    "trade_type": "Malerarbeiten",
+    "certifications_required": [],
+    "role_required": null,
+    "construction_window_start": null,
+    "construction_window_end": null,
+    "references_required": null,
+    "eigenleistung_min_pct": null,
+    "guarantee_required_eur": null,
+    "estimated_value_eur": null,
+    "complexity_markers": [],
+    "hidden_blockers": []
+  }
+]

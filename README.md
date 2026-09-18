@@ -44,4 +44,16 @@ curl http://localhost:8000/health
 python scripts/prototype.py
 ```
 
-Copy `.env.example` to `.env` and fill in `GEMINI_API_KEY` when needed. Never commit `.env`.
+Create `.env` with `GEMINI_API_KEY` and `GEMINI_MODEL=gemini-3.8-flash`. Never commit `.env`.
+
+## Tender extraction prototype
+
+See [scripts/EXTRACTION.md](scripts/EXTRACTION.md) for live Gemini extraction,
+three offline replay fixtures, all-page processing, audit output, and tests.
+
+## Frontend extraction API
+
+ZIP uploads and polling are available at `/api/extractions`. Start the backend with
+`uvicorn app.main:app --port 8000` (one worker) and open `/docs` for the API explorer.
+See [frontend integration guide](scripts/FRONTEND-INTEGRATION.md) for the Angular
+service, API contract, result statuses, setup and deployment limits.
