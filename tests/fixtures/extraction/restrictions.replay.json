@@ -1,0 +1,22 @@
+[
+  {
+    "trade_type": "Schadstoffsanierung",
+    "certifications_required": [
+      "Sachkundenachweis TRGS 519"
+    ],
+    "role_required": "subcontractor",
+    "construction_window_start": null,
+    "construction_window_end": null,
+    "references_required": "Zwei Referenzen für Asbestsanierung aus den letzten drei Jahren",
+    "eigenleistung_min_pct": null,
+    "guarantee_required_eur": null,
+    "estimated_value_eur": null,
+    "complexity_markers": [
+      "Arbeiten im laufenden Krankenhausbetrieb"
+    ],
+    "hidden_blockers": [
+      "Vertragserfüllungsbürgschaft: 5 % der Auftragssumme",
+      "Arbeiten ausschließlich nachts von 22:00 bis 06:00 Uhr"
+    ]
+  }
+]
